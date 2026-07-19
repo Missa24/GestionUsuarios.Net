@@ -1,0 +1,62 @@
+using System.Text.Json;
+using BackendNet.Application.Exceptions;
+
+namespace BackendNet.Api.Middleware;
+
+public class ExceptionMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public ExceptionMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (UserNotFoundException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            context.Response.ContentType = "application/json";
+
+            await context.Response.WriteAsJsonAsync(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (EmailAlreadyExistsException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status409Conflict;
+            context.Response.ContentType = "application/json";
+
+            await context.Response.WriteAsJsonAsync(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (InvalidCredentialsException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/json";
+
+            await context.Response.WriteAsJsonAsync(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (Exception)
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+
+            await context.Response.WriteAsJsonAsync(new
+            {
+                message = "Internal Server Error"
+            });
+        }
+    }
+}
