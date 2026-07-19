@@ -1,0 +1,20 @@
+# Build
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# App Settings
+src/BackendNet.Api/appsettings.Development.json
+
+# Logs
+*.log
