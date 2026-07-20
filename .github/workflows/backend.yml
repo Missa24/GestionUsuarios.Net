@@ -32,3 +32,6 @@ jobs:
 
       - name: Run Tests
         run: dotnet test --no-build
+
+      - name: Build Docker image
+        run: docker build -t backendnet .
